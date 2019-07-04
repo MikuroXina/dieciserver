@@ -1,5 +1,5 @@
-fn html_entity(key: String) -> String {
-  match key.as_str() {
+fn html_entity(key: &str) -> String {
+  match key {
 "&quot;" => String::from_utf8_lossy(b"\""),
 "&amp;" => String::from_utf8_lossy(b"&"),
 "&lt;" => String::from_utf8_lossy(b"<"),
@@ -257,7 +257,7 @@ _ => String::from_utf8_lossy(b""),
   }.into_owned()
 }
 
-fn escape_html(input: String) -> String {
+fn escape_html(input: &str) -> String {
   let mut output = String::with_capacity(input.len() + 1);
   for input_c in input.chars() {
     let converted = match input_c {
@@ -273,7 +273,7 @@ fn escape_html(input: String) -> String {
   output
 }
 
-fn unescape_html(input: String) -> String {
+fn unescape_html(input: &str) -> String {
   let mut output = String::with_capacity(input.len() + 1);
   for i in 0..input.len() {
     let input_c = input.as_bytes()[i] as char;
@@ -293,7 +293,7 @@ fn unescape_html(input: String) -> String {
         entity.trim_start_matches("&#").to_string()
       }
     } else {
-      html_entity(entity.to_string())
+      html_entity(entity)
     };
     output.push_str(code.as_str());
   }
@@ -302,12 +302,12 @@ fn unescape_html(input: String) -> String {
 
 #[test]
 fn unescape_test() {
-  let converted = html_entity("&apos;".to_string());
+  let converted = html_entity("&apos;");
   assert_eq!("'".to_string(), converted);
 }
 
 #[test]
 fn escape_test() {
-  let converted = escape_html("&".to_string());
+  let converted = escape_html("&");
   assert_eq!("&amp;".to_string(), converted);
 }
